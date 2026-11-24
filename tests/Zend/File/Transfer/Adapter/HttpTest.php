@@ -20,6 +20,7 @@
  * @version    $Id$
  */
 
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Test class for Zend_File_Transfer_Adapter_Http
@@ -29,8 +30,8 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @group      Zend_File
  */
+#[Group('Zend_File')]
 class Zend_File_Transfer_Adapter_HttpTest extends PHPUnit\Framework\TestCase
 {
     protected $adapter;
@@ -129,9 +130,7 @@ class Zend_File_Transfer_Adapter_HttpTest extends PHPUnit\Framework\TestCase
         }
     }
 
-    /**
-     * @group ZF-12451
-     */
+    #[Group('ZF-12451')]
     public function testReceiveEmptyArray()
     {
         $_SERVER['CONTENT_LENGTH'] = 10;
@@ -219,7 +218,7 @@ class Zend_File_Transfer_Adapter_HttpTest extends PHPUnit\Framework\TestCase
         }
 
         $status = Zend_File_Transfer_Adapter_HttpTest_MockAdapter::getProgress();
-        $this->assertStringContainsString('No upload in progress', $status);
+        $this->assertStringContainsString('No upload in progress', $status['message']);
     }
 
     public function testUploadProgressFailure()

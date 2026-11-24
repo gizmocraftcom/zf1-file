@@ -20,6 +20,7 @@
  * @version    $Id$
  */
 
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Test class for Zend_File_Transfer_Adapter_Abstract
@@ -29,8 +30,8 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @group      Zend_File
  */
+#[Group('Zend_File')]
 class Zend_File_Transfer_Adapter_AbstractTest extends PHPUnit\Framework\TestCase
 {
     /**
@@ -856,9 +857,7 @@ class Zend_File_Transfer_Adapter_AbstractTest extends PHPUnit\Framework\TestCase
                 'detectInfos'   => false)), $this->adapter->getOptions('foo'));
     }
 
-    /**
-     * @group GH-65
-     */
+    #[Group('GH-65')]
     public function testSetDestinationWithNonExistingPathShouldThrowException()
     {
         // Create temporary directory

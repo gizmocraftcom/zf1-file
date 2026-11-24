@@ -19,6 +19,7 @@
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Test class for Zend_File_ClassFileLocator
@@ -28,8 +29,8 @@
  * @subpackage UnitTests
  * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @group      Zend_File
  */
+#[Group('Zend_File')]
 class Zend_File_ClassFileLocatorTest extends PHPUnit\Framework\TestCase
 {
     public function testConstructorThrowsInvalidArgumentExceptionForInvalidStringDirectory()
