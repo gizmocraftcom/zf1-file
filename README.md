@@ -10,3 +10,9 @@ Zend Framework 1 - File
 This is just the Zend_File component extracted from our fork of the Zend Framework 1 repo (https://github.com/gizmocraftcom/zf1).
 
 Originally forked from the upstream repository https://github.com/diablomedia/zf1-file. Copyright and license of the original authors are kept in LICENSE.txt.
+
+Requires PHP 8.5 or newer (tested on 8.5 and 8.6). See CHANGELOG.md for changes compared to upstream.
+
+## Progress adapters (APC, uploadprogress)
+
+`Zend_File_Transfer_Adapter_Http::getProgress()`, `isApcAvailable()` and `isUploadProgressAvailable()` use the `apc` and `uploadprogress` PHP extensions. Neither extension has a release for PHP 8.5 or 8.6. The methods are kept and marked `@deprecated`; without one of the extensions `getProgress()` throws `Zend_File_Transfer_Exception`. The three progress tests are skipped when no extension is installed, as upstream.

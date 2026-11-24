@@ -39,7 +39,7 @@ class Zend_File_ClassFileLocator extends FilterIterator
     public function __construct($dirOrIterator = '.')
     {
         if (is_string($dirOrIterator)) {
-            if (!is_dir($dirOrIterator)) {
+            if (strpos($dirOrIterator, "\0") !== false || !is_dir($dirOrIterator)) {
                 throw new InvalidArgumentException('Expected a valid directory name');
             }
 

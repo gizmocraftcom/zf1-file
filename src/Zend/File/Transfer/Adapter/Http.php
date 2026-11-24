@@ -178,7 +178,7 @@ class Zend_File_Transfer_Adapter_Http extends Zend_File_Transfer_Adapter_Abstrac
                 }
 
                 // Should never return false when it's tested by the upload validator
-                if (!move_uploaded_file($content['tmp_name'], $filename)) {
+                if (strpos($filename, "\0") !== false || !move_uploaded_file($content['tmp_name'], $filename)) {
                     if ($content['options']['ignoreNoFile']) {
                         $this->_files[$file]['received'] = true;
                         $this->_files[$file]['filtered'] = true;
@@ -292,6 +292,11 @@ class Zend_File_Transfer_Adapter_Http extends Zend_File_Transfer_Adapter_Abstrac
     /**
      * Returns the actual progress of file up-/downloads
      *
+     * The APC and uploadprogress extensions have no releases for PHP 8.5/8.6. The support is kept for
+     * installations that still provide `apc_fetch()` or `uploadprogress_get_info()`; without them
+     * this method throws a Zend_File_Transfer_Exception.
+     *
+     * @deprecated No supported PHP version ships the APC or uploadprogress extension
      * @param  string|array $id The upload to get the progress for
      * @return array|null
      */
@@ -396,6 +401,7 @@ class Zend_File_Transfer_Adapter_Http extends Zend_File_Transfer_Adapter_Abstrac
     /**
      * Checks the APC extension for progress information
      *
+     * @deprecated The APC extension has no release for PHP 8.5/8.6; kept for installations that provide it
      * @return boolean
      */
     public static function isApcAvailable()
@@ -406,6 +412,7 @@ class Zend_File_Transfer_Adapter_Http extends Zend_File_Transfer_Adapter_Abstrac
     /**
      * Checks the UploadProgress extension for progress information
      *
+     * @deprecated The uploadprogress extension has no release for PHP 8.5/8.6; kept for installations that provide it
      * @return boolean
      */
     public static function isUploadProgressAvailable()

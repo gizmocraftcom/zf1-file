@@ -1024,7 +1024,7 @@ abstract class Zend_File_Transfer_Adapter_Abstract
     {
         $orig        = $files;
         $destination = rtrim($destination, '/\\');
-        if (!is_dir($destination)) {
+        if (strpos($destination, "\0") !== false || !is_dir($destination)) {
             throw new Zend_File_Transfer_Exception(
                 'The given destination is not a directory or does not exist'
             );
@@ -1168,9 +1168,9 @@ abstract class Zend_File_Transfer_Adapter_Abstract
         $files  = $this->_getFiles($files);
         $result = array();
         foreach ($files as $key => $value) {
-            if (file_exists($value['name'])) {
+            if ($this->_fileExists($value['name'])) {
                 $result[$key] = hash_file($hash, $value['name']);
-            } elseif (file_exists($value['tmp_name'])) {
+            } elseif ($this->_fileExists($value['tmp_name'])) {
                 $result[$key] = hash_file($hash, $value['tmp_name']);
             } elseif (empty($value['options']['ignoreNoFile'])) {
                 throw new Zend_File_Transfer_Exception("The file '{$value['name']}' does not exist");
@@ -1196,7 +1196,7 @@ abstract class Zend_File_Transfer_Adapter_Abstract
         $files  = $this->_getFiles($files);
         $result = array();
         foreach ($files as $key => $value) {
-            if (file_exists($value['name']) || file_exists($value['tmp_name'])) {
+            if ($this->_fileExists($value['name']) || $this->_fileExists($value['tmp_name'])) {
                 if ($value['options']['useByteString']) {
                     $result[$key] = self::_toByteString($value['size']);
                 } else {
@@ -1217,6 +1217,23 @@ abstract class Zend_File_Transfer_Adapter_Abstract
     }
 
     /**
+     * Checks if the given path is an existing file or directory
+     *
+     * PHP 8.6 throws a ValueError for paths containing NUL bytes; such a path can never exist.
+     *
+     * @param  mixed $path Path to check
+     * @return boolean
+     */
+    protected function _fileExists($path)
+    {
+        if (!is_string($path) || strpos($path, "\0") !== false) {
+            return false;
+        }
+
+        return file_exists($path);
+    }
+
+    /**
      * Internal method to detect the size of a file
      *
      * @param  array $value File infos
@@ -1224,9 +1241,9 @@ abstract class Zend_File_Transfer_Adapter_Abstract
      */
     protected function _detectFileSize($value)
     {
-        if (file_exists($value['name'])) {
+        if ($this->_fileExists($value['name'])) {
             $result = sprintf('%u', @filesize($value['name']));
-        } elseif (file_exists($value['tmp_name'])) {
+        } elseif ($this->_fileExists($value['tmp_name'])) {
             $result = sprintf('%u', @filesize($value['tmp_name']));
         } else {
             return null;
@@ -1248,7 +1265,7 @@ abstract class Zend_File_Transfer_Adapter_Abstract
         $files  = $this->_getFiles($files);
         $result = array();
         foreach ($files as $key => $value) {
-            if (file_exists($value['name']) || file_exists($value['tmp_name'])) {
+            if ($this->_fileExists($value['name']) || $this->_fileExists($value['tmp_name'])) {
                 $result[$key] = $value['type'];
             } elseif (empty($value['options']['ignoreNoFile'])) {
                 throw new Zend_File_Transfer_Exception("The file '{$value['name']}' does not exist");
@@ -1272,9 +1289,9 @@ abstract class Zend_File_Transfer_Adapter_Abstract
      */
     protected function _detectMimeType($value)
     {
-        if (file_exists($value['name'])) {
+        if ($this->_fileExists($value['name'])) {
             $file = $value['name'];
-        } elseif (file_exists($value['tmp_name'])) {
+        } elseif ($this->_fileExists($value['tmp_name'])) {
             $file = $value['tmp_name'];
         } else {
             return null;
